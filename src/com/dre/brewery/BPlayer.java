@@ -178,9 +178,12 @@ public class BPlayer {
 		int brewAlc = drinkEvent.getAddedAlcohol();
 		int quality = drinkEvent.getQuality();
 
-		for (BEffect effect : brew.getEffects()) {
-			effect.apply(quality, player);
-			// applyEffects(effects, player, PlayerEffectEvent.EffectType.DRINK);
+		List<BEffect> effects = brew.getEffects();
+		if(effects != null) {
+			for (BEffect effect : effects) {
+				effect.apply(quality, player);
+				// applyEffects(effects, player, PlayerEffectEvent.EffectType.DRINK);
+			}
 		}
 
 		if (brewAlc < 0) {

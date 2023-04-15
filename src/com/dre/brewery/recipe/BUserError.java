@@ -9,6 +9,17 @@ import com.dre.brewery.P;
 public interface BUserError {
     public String userMessage();
 
+	public class NoHintError implements BUserError {
+		public NoHintError(){
+		}
+
+
+		@Override
+		public String userMessage() {
+			return "This seems to be all kinds of wrong...";
+		}
+	}
+
     public class BadIngredientKindError implements BUserError {
         private Ingredient excessItemStack;
 

@@ -17,6 +17,8 @@ import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.google.common.collect.Lists;
 
+import com.palmergames.adventure.text.Component;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,10 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mini2Dx.gettext.GetText;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static com.dre.brewery.utility.PermissionUtil.BPermission.*;
@@ -215,14 +214,14 @@ public class CommandListener implements CommandExecutor {
 		Set<String> crafted = CraftedBrewTracker.playerBrews(player.getUniqueId().toString());
 
 		for (BRecipe recipe : recipes) {
-			if (crafted.contains(recipe.getOptionalID().get())) {
+			if (recipe.getOptionalID().isPresent() && crafted.contains(recipe.getOptionalID().get())) {
 				pane.addItem(new GuiItem(recipe.create(10), ev -> ev.setCancelled(true)));
 			} else {
 				ItemStack item = new ItemStack(Material.BARRIER);
 				Brew brew = recipe.createBrew(10);
 				ItemMeta meta = brew.unLabel(brew.createItem(recipe));
 				ItemMeta itemMeta = item.getItemMeta();
-				itemMeta.setDisplayName(meta.getDisplayName());
+				itemMeta.setDisplayName(ChatColor.MAGIC + UUID.nameUUIDFromBytes(meta.getDisplayName().getBytes()).toString());
 				item.setItemMeta(itemMeta);
 				pane.addItem(new GuiItem(item, ev -> ev.setCancelled(true)));
 			}

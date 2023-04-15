@@ -321,7 +321,7 @@ public class BIngredients {
 			}
 		}
 		for (RecipeItem ingredient : recipe.getIngredients()) {
-			if (!ingredients.stream().anyMatch(ing -> ingredient.matches(ing))) {
+			if (ingredients.stream().noneMatch(ingredient::matches)) {
 				errors.add(new BUserError.MissingIngredientKindError(ingredient));
 			}
 		}
@@ -331,6 +331,8 @@ public class BIngredients {
 
 		return errors;
 	}
+
+
 
 	/**
 	 * @see getErrorsForRecipe
@@ -350,7 +352,11 @@ public class BIngredients {
 			}
 		}
 
-		assert matchingRecipes.size() > 0 : "we must have at least 1 matching recipe";
+		if(matchingRecipes.isEmpty()){
+			return new ArrayList<>();
+		}
+
+		//assert matchingRecipes.size() > 0 : "we must have at least 1 matching recipe";
 		return matchingRecipes.get(ThreadLocalRandom.current().nextInt(matchingRecipes.size()));
 	}
 
@@ -360,6 +366,10 @@ public class BIngredients {
 	 */
 	public BUserError getError(float wood, float time, boolean distilled) {
 		List<BUserError> errors = getErrors(wood, time, distilled);
+
+		if(errors.isEmpty()){
+			return new BUserError.NoHintError();
+		}
 
 		return errors.get(ThreadLocalRandom.current().nextInt(errors.size()));
 	}
@@ -382,6 +392,10 @@ public class BIngredients {
 	 * returns the quality of the ingredients conditioning given recipe, -1 if no recipe is near them
 	 */
 	public int getIngredientQuality(BRecipe recipe) {
+		if(recipe == null){
+			return -1;
+		}
+
 		float quality = 10;
 		int count;
 		int badStuff = 0;
@@ -422,6 +436,10 @@ public class BIngredients {
 	 * returns the quality regarding the cooking-time conditioning given Recipe
 	 */
 	public int getCookingQuality(BRecipe recipe, boolean distilled) {
+		if(recipe == null){
+			return -1;
+		}
+
 		if (!recipe.needsDistilling() == distilled) {
 			return -1;
 		}
@@ -440,6 +458,10 @@ public class BIngredients {
 	 * returns pseudo quality of distilling. 0 if doesnt match the need of the recipes distilling
 	 */
 	public int getDistillQuality(BRecipe recipe, byte distillRuns) {
+		if(recipe == null){
+			return 0;
+		}
+
 		if (recipe.needsDistilling() != distillRuns > 0) {
 			return 0;
 		}
@@ -450,6 +472,10 @@ public class BIngredients {
 	 * returns the quality regarding the barrel wood conditioning given Recipe
 	 */
 	public int getWoodQuality(BRecipe recipe, float wood) {
+		if(recipe == null){
+			return 0;
+		}
+
 		if (recipe.getWood() == 0) {
 			// type of wood doesnt matter
 			return 10;
@@ -463,6 +489,10 @@ public class BIngredients {
 	 * returns the quality regarding the ageing time conditioning given Recipe
 	 */
 	public int getAgeQuality(BRecipe recipe, float time) {
+		if(recipe == null){
+			return 0;
+		}
+
 		int quality = 10 - Math.round(Math.abs(time - recipe.getAge()) * ((float) recipe.getDifficulty() / 2));
 
 		return Math.max(quality, 0);
